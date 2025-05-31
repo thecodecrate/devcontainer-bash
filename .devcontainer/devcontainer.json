@@ -1,0 +1,121 @@
+{
+  "name": "templates/bash",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        /**
+          * Common extensions
+          **/
+        "aaron-bond.better-comments",
+        "DavidAnson.vscode-markdownlint",
+        "mikestead.dotenv",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        "github.vscode-github-actions",
+        "editorconfig.editorconfig",
+        /**
+          * AI extensions
+          **/
+        "github.copilot",
+        "github.copilot-chat",
+        "chrisdias.promptboost",
+        /**
+        * Opinionated extensions (Themes, colors, etc.)
+        **/
+        "pkief.material-icon-theme",
+        "atomiks.moonlight",
+        /**
+          * Bash script extensions
+          **/
+        "mads-hartmann.bash-ide-vscode",
+        "rogalmic.bash-debug",
+        "jetmartin.bats",
+        /**
+          * AWK script extensions
+          **/
+        "beaglefoot.awk-ide-vscode",
+        /**
+         * Auto-applied devcontainer feature extensions (docker-outside-of-docker)
+         **/
+        "ms-azuretools.vscode-docker" // keep
+      ],
+      "settings": {
+        /**
+          * Common settings
+          **/
+        "editor.linkedEditing": true,
+        "editor.formatOnSave": true,
+        "editor.rulers": [
+          80,
+          100
+        ],
+        "editor.guides.bracketPairs": true,
+        "editor.guides.highlightActiveIndentation": true,
+        "explorer.sortOrderLexicographicOptions": "upper",
+        "files.insertFinalNewline": true,
+        "files.eol": "\n",
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.shell.linux": "/bin/zsh",
+        /**
+         * Settings for Opinionated Extensions (themes, colors, etc.)
+         **/
+        "workbench.iconTheme": "material-icon-theme",
+        "workbench.colorTheme": "Moonlight",
+        /**
+          * Settings for Extensions
+          **/
+        // MkDocs
+        "yaml.schemas": {
+          "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
+        },
+        // Bash IDE (mads-hartmann.bash-ide-vscode)
+        "bashIde.enableSourceErrorDiagnostics": true,
+        "bashIde.shellcheckPath": "shellcheck",
+        "bashIde.shfmt.languageDialect": "bash",
+        "bashIde.shfmt.path": "shfmt",
+        "bashIde.shfmt.simplifyCode": true,
+        "bashIde.shfmt.funcNextLine": true,
+        "bashIde.shfmt.binaryNextLine": true,
+        "bashIde.shfmt.caseIndent": true,
+        "bashIde.globPattern": "**/*@(.sh|.inc|.bash|.command|.zsh)",
+        /**
+         * Per-MIME settings
+         **/
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml",
+          "editor.formatOnSave": true
+        },
+        "[markdown]": {
+          "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+          "editor.formatOnSave": true,
+          "editor.wordWrap": "on"
+        },
+        "[shellscript]": {
+          "editor.defaultFormatter": "mads-hartmann.bash-ide-vscode",
+          "editor.formatOnSave": true,
+          "editor.tabSize": 2,
+          "editor.detectIndentation": false
+        }
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "configureZshAsDefaultShell": true,
+      "installOhMyZsh": true,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "remoteUser": "vscode",
+  "onCreateCommand": "zsh -i .devcontainer/scripts/on-create.sh",
+  "postCreateCommand": "zsh -i .devcontainer/scripts/post-create.sh",
+  "postStartCommand": "zsh -i .devcontainer/scripts/post-start.sh",
+  "containerEnv": {
+    "INSIDE_DEVCONTAINER": "true",
+    "WORKSPACE_DIR": "${containerWorkspaceFolder}",
+    "WITH_ZSH_PLUGINS": "zsh-users/zsh-autosuggestions zsh-users/zsh-syntax-highlighting zsh-users/zsh-completions"
+  }
+}

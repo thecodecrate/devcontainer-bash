@@ -1,0 +1,43 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+# Shell scripts (bash/zsh)
+[*.{sh,bash,zsh}]
+indent_style = space
+indent_size = 2
+shell_variant = bash
+binary_next_line = true
+switch_case_indent = true
+space_redirects = true
+keep_padding = false
+
+# Bats test files
+[*.bats]
+indent_style = tab
+indent_size = 4
+shell_variant = bats
+
+# Documentation
+[*.{md,rst}]
+trim_trailing_whitespace = false
+indent_style = space
+indent_size = 2
+
+# JSON/YAML configuration
+[*.{json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# Python files (if any)
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Makefile
+[Makefile]
+indent_style = tab

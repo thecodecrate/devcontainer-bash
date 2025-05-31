@@ -1,0 +1,18 @@
+{
+    "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "file": "docs/guidelines/shell-style.md"
+        }
+    ],
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "file": "docs/guidelines/commit-style.md"
+        }
+    ],
+    "chat.promptFiles": true,
+    "files.associations": {
+        "*.prompt.md": "markdown"
+    },
+    "github.copilot.editor.enableAutoCompletions": true
+}

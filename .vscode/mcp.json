@@ -1,0 +1,69 @@
+{
+  "inputs": [
+    {
+      "type": "promptString",
+      "id": "brave_api_key",
+      "description": "Brave Search API Key",
+      "password": true
+    }
+  ],
+  "servers": {
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "BRAVE_API_KEY",
+        "mcp/brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "${input:brave_api_key}"
+      }
+    },
+    "memory": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "-v",
+        "claude-memory:/app/dist",
+        "--rm",
+        "mcp/memory"
+      ]
+    },
+    "git": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--mount",
+        "type=bind,src=${workspaceFolder},dst=/workspace",
+        "mcp/git"
+      ]
+    },
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--mount",
+        "type=bind,src=${workspaceFolder},dst=/projects",
+        "mcp/filesystem",
+        "/projects"
+      ]
+    },
+    "fetch": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "mcp/fetch"
+      ]
+    }
+  }
+}

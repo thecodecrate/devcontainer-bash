@@ -1,76 +1,219 @@
-# devcontainer-bash
+# Bash Development Template
 
-> Professional Bash development environment with VS Code devcontainer, BATS testing, debugging, and AI integration
+> Professional bash development environment with VS Code devcontainer, BATS testing, debugging, and AI integration
 
-## 🚧 Work in Progress
+## ✨ Features
 
-This project is currently under active development. The initial implementation is being built on the `initial-implementation` branch.
+A comprehensive VS Code development container template designed for professional bash script development. This template provides a complete development environment with modern tooling, testing frameworks, debugging capabilities, and AI-enhanced workflows.
 
-## Overview
+### 🛠️ Complete Toolchain
 
-A comprehensive VS Code development container template designed for professional bash script development. This template provides a complete development environment with modern tooling, testing frameworks, debugging capabilities, and AI-enhanced development workflows.
-
-### Key Features (Planned)
-
-- **🐳 Development Container**: Ubuntu-based devcontainer with Zsh shell
-- **🧪 Testing Framework**: BATS-Core with assertion and support helpers
+- **🐳 Development Container**: Ubuntu-based devcontainer with Zsh shell and custom setup tools
+- **🧪 Testing Framework**: BATS-Core with assertion and support helper libraries
 - **🐛 Debugging Support**: BashDB integration with VS Code debugging interface
-- **✅ Code Quality**: ShellCheck linting and shfmt formatting
+- **✅ Code Quality**: ShellCheck linting and shfmt formatting with real-time feedback
 - **🤖 AI Integration**: GitHub Copilot with custom instructions and MCP servers
 - **📁 Project Structure**: Organized file layout for scalable bash projects
 - **⚡ Developer Experience**: Custom aliases, themes, and VS Code task integration
+- **🔧 Setup Automation**: Custom devcontainer tools for zsh plugins and configuration management
 
-## Planned Architecture
+## 🏗️ Architecture
 
-```
+```bash
 /
-├── src/                    # Source bash scripts
-├── test/                   # BATS test files and framework
-│   ├── *.bats             # Test implementations
-│   ├── bats/              # BATS core (submodule)
-│   └── test_helper/       # Helper libraries (submodules)
-├── .devcontainer/         # Container configuration
-│   ├── scripts/           # Lifecycle automation
-│   └── etc/bash-aliases   # Alias management
-├── .vscode/               # IDE configuration
-└── .github/               # AI instructions and metadata
+├── src/                         # Source bash scripts
+├── test/                        # BATS test files and framework
+│   ├── *.bats                  # Test implementations
+│   ├── bats/                   # BATS core (submodule)
+│   └── test_helper/            # Helper libraries (submodules)
+├── .devcontainer/              # Container configuration
+│   ├── devcontainer.json       # Main container config
+│   ├── setup/                  # Custom setup tools
+│   │   ├── install-zsh-plugins/    # Zinit plugin installer
+│   │   ├── install-custom-config/  # Oh-my-zsh config loader
+│   │   └── switch-apt-mirror/      # APT mirror switcher
+│   └── etc/                    # Environment configurations
+├── .vscode/                    # IDE configuration
+│   ├── tasks.json              # Build and test tasks
+│   ├── launch.json             # Debug configurations
+│   └── settings.json           # Editor settings
+├── .github/                    # AI instructions and metadata
+└── docs/                       # Documentation and guidelines
 ```
 
-## Development Status
+## 🚀 Quick Start
 
-- [x] Project specification complete
-- [ ] Development container configuration
-- [ ] BATS testing framework integration
-- [ ] BashDB debugging setup
-- [ ] Code quality toolchain (ShellCheck + shfmt)
-- [ ] VS Code task configuration
-- [ ] AI integration (Copilot + MCP servers)
-- [ ] Documentation and examples
-- [ ] Template validation and testing
+### Prerequisites
 
-## Template Collection
+- [VS Code](https://code.visualstudio.com/) with [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+- [Docker](https://www.docker.com/get-started) installed and running
 
-This repository is part of a larger collection of development container templates maintained by [thecodecrate](https://github.com/thecodecrate). Each template provides a specialized development environment for different languages and frameworks:
+### Getting Started
 
-- `devcontainer-bash` (this repository)
-- `devcontainer-laravel` (planned)
-- `devcontainer-nextjs` (planned)
-- `devcontainer-expo` (planned)
-- `devcontainer-nestjs` (planned)
+1. **Use this template** to create a new repository or clone directly:
 
-## Getting Started
+   ```bash
+   git clone https://github.com/thecodecrate/devcontainer-bash.git my-bash-project
+   cd my-bash-project
+   ```
 
-⚠️ **Not yet available** - This template is still in development.
+2. **Open in VS Code**:
 
-Once complete, you'll be able to:
+   ```bash
+   code .
+   ```
 
-1. Use this template to create a new repository
-2. Open in VS Code with Dev Containers extension
-3. Start developing bash scripts with full toolchain support
+3. **Reopen in Container** when prompted, or use Command Palette:
+   - `Ctrl+Shift+P` → "Dev Containers: Reopen in Container"
 
-## Contributing
+4. **Start developing**! The environment includes:
+   - Example script: `src/example.sh`
+   - Example test: `test/example.bats`
+   - Pre-configured tasks and debugging
 
-This project is currently in initial development phase. Contributions will be welcomed once the first version is complete.
+### First Steps
+
+Run the example test to verify everything works:
+
+```bash
+# Using VS Code task (Ctrl+Shift+P → "Tasks: Run Task" → "Test (Bats)")
+./test/bats/bin/bats test/
+
+# Or run specific test file
+./test/bats/bin/bats test/example.bats
+```
+
+Debug the example script:
+
+- Open `src/example.sh`
+- Set a breakpoint (click left margin)
+- Press `F5` or use "Run and Debug" panel
+
+## 📚 Development Workflow
+
+### Writing Scripts
+
+1. **Create scripts** in `src/` directory following the [shell style guide](docs/guidelines/shell-style.md)
+2. **Add tests** in `test/` directory using BATS syntax
+3. **Use VS Code features**:
+   - IntelliSense for bash commands and variables
+   - Real-time ShellCheck linting
+   - Format on save with shfmt
+
+### Testing
+
+- **Run all tests**: Use "Test (Bats)" task or `./test/bats/bin/bats test/`
+- **Run specific test**: `./test/bats/bin/bats test/my_test.bats`
+- **Watch mode**: Not built-in, but easy to add with file watchers
+
+### Debugging
+
+- **Interactive debugging**: Set breakpoints and press `F5`
+- **Variable inspection**: Use Debug Console and Watch panels
+- **Step execution**: Step into, over, and out of functions
+
+### Code Quality
+
+- **Linting**: ShellCheck runs automatically, see Problems panel
+- **Formatting**: Format on save enabled, or use `Shift+Alt+F`
+- **Custom rules**: Configure in `.vscode/settings.json` or `.shellcheckrc`
+
+## 🔧 Customization
+
+### Adding Zsh Plugins
+
+The template includes a custom tool for installing zsh plugins via zinit:
+
+```json
+{
+  "containerEnv": {
+    "WITH_ZSH_PLUGINS": "zsh-users/zsh-autosuggestions zsh-users/zsh-syntax-highlighting"
+  }
+}
+```
+
+### Custom Shell Configuration
+
+Use the `install-custom-config` tool to automatically load custom scripts:
+
+```bash
+./.devcontainer/setup/install-custom-config/setup.bash --custom-dir /path/to/custom/scripts
+```
+
+### APT Mirror Switching
+
+For faster package installation in certain regions:
+
+```bash
+./.devcontainer/setup/switch-apt-mirror/setup.bash mirrors.kernel.org
+```
+
+### VS Code Extensions
+
+Add extensions to `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "your.extension.id"
+      ]
+    }
+  }
+}
+```
+
+## 📋 Available VS Code Tasks
+
+| Task | Description | Shortcut |
+|------|-------------|----------|
+| **Test (Bats)** | Run all BATS tests | `Ctrl+Shift+P` → Tasks |
+| **Lint Scripts** | Run ShellCheck on all scripts | Available in task menu |
+| **Format Scripts** | Format all scripts with shfmt | Available in task menu |
+
+## 🤖 AI Integration
+
+This template includes comprehensive AI assistance:
+
+### GitHub Copilot
+
+- Custom instructions for bash development in `.github/copilot-instructions.md`
+- Context-aware suggestions for shell scripting patterns
+- Integrated with VS Code for seamless code completion
+
+### Model Context Protocol (MCP) Servers
+
+Pre-configured MCP servers provide enhanced AI capabilities:
+
+- **Brave Search**: Web search for documentation and examples
+- **Memory**: Persistent project knowledge and context
+- **Git**: Repository operations and version control assistance
+- **Filesystem**: Secure file operations with access controls
+- **Fetch**: Web content retrieval and markdown conversion
+
+## 📖 Documentation
+
+- **[Shell Style Guide](docs/guidelines/shell-style.md)**: Coding standards and best practices
+- **[Commit Style Guide](docs/guidelines/commit-style.md)**: Git commit message conventions
+- **[SPECIFICATION.md](SPECIFICATION.md)**: Complete technical specification
+- **Tool Specifications**: Detailed docs for each custom devcontainer tool
+
+## 🧰 Included Tools
+
+### Custom Devcontainer Tools
+
+- **[install-zsh-plugins](/.devcontainer/setup/install-zsh-plugins/)**: Automated zinit plugin installation
+- **[install-custom-config](/.devcontainer/setup/install-custom-config/)**: Oh-my-zsh configuration loader
+- **[switch-apt-mirror](/.devcontainer/setup/switch-apt-mirror/)**: APT repository mirror management
+
+### Development Tools
+
+- **BATS-Core**: Bash testing framework with helpers
+- **BashDB**: Interactive bash debugger
+- **ShellCheck**: Static analysis and linting
+- **shfmt**: Shell script formatting
+- **Zinit**: Fast zsh plugin manager
 
 ## License
 
