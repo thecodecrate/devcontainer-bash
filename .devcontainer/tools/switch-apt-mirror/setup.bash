@@ -15,12 +15,13 @@
 #       Filter by distribution suite (default: all)
 #   --no-backup
 #       Skip backup creation
+#   --no-update
+#       Skip running 'apt update' after switching mirrors
 #
 # Notes:
 #   - Replaces mirror URLs while preserving all other repository metadata.
 #   - Processes /etc/apt/sources.list only (not sources.list.d files).
 #   - Creates timestamped backups by default unless --no-backup is specified.
-#   - Run 'sudo apt update' after switching mirrors.
 #   - Script must be run with sudo privileges.
 #
 
@@ -30,28 +31,28 @@ SELF_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
 readonly SELF_DIR
 
 { # Colors
-  COLOR_RESET=$'\033[0m'
-  COLOR_BOLD_RED=$'\033[1;31m'
-  COLOR_BOLD_GREEN=$'\033[1;32m'
-  COLOR_BOLD_YELLOW=$'\033[1;33m'
-  COLOR_BOLD_BLUE=$'\033[1;34m'
+  BOLD_RED=$'\033[1;31m'
+  BOLD_GREEN=$'\033[1;32m'
+  BOLD_YELLOW=$'\033[1;33m'
+  BOLD_BLUE=$'\033[1;34m'
+  NC=$'\033[0m'
 }
 
 { # Logging functions
   log::info() {
-    echo -e "${COLOR_BOLD_BLUE}[INFO]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_BLUE}[INFO]${NC} $*" >&2
   }
 
   log::success() {
-    echo -e "${COLOR_BOLD_GREEN}[SUCCESS]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_GREEN}[SUCCESS]${NC} $*" >&2
   }
 
   log::warning() {
-    echo -e "${COLOR_BOLD_YELLOW}[WARNING]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_YELLOW}[WARNING]${NC} $*" >&2
   }
 
   log::error() {
-    echo -e "${COLOR_BOLD_RED}[ERROR]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_RED}[ERROR]${NC} $*" >&2
   }
 }
 
@@ -76,6 +77,7 @@ parse_args() {
   local type="all"
   local suite="all"
   local no_backup=0
+  local no_update=0
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -89,6 +91,10 @@ parse_args() {
         ;;
       --no-backup)
         no_backup=1
+        shift
+        ;;
+      --no-update)
+        no_update=1
         shift
         ;;
       -*)
@@ -107,7 +113,7 @@ parse_args() {
     exit 1
   fi
 
-  echo "$type" "$suite" "$no_backup" "$new_provider"
+  echo "$type" "$suite" "$no_backup" "$no_update" "$new_provider"
 }
 
 sources_file::backup() {
@@ -156,19 +162,30 @@ sources_file::process() {
   fi
 }
 
+apt::update() {
+  if ! apt-get update; then
+    log::error "Failed to run 'apt update'. Please check your sources.list."
+    exit 1
+  fi
+}
+
 main() {
   show_environment "$@"
 
   check_dependencies
 
   # Parse arguments and assign to variables
-  read -r type suite no_backup new_provider < <(parse_args "$@")
+  read -r type suite no_backup no_update new_provider < <(parse_args "$@")
 
   if [[ "${no_backup}" -eq 0 ]]; then
     sources_file::backup
   fi
 
   sources_file::process "${type}" "${suite}" "${new_provider}"
+
+  if [[ "${no_update}" -eq 0 ]]; then
+    apt::update
+  fi
 
   log::success "Successfully switched APT repository mirrors to ${new_provider}."
 }

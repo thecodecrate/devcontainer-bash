@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 #
 # Sets up a custom configuration loader for oh-my-zsh that automatically
 # sources shell scripts from a specified directory on every new shell session.
@@ -6,7 +6,7 @@
 # allows for easier management of custom configurations.
 #
 # Usage:
-#   ./setup.bash --custom-dir <path>
+#   enable-config-dir <path>
 #
 # Notes:
 # - Requires oh-my-zsh and $ZSH_CUSTOM environment variable
@@ -17,35 +17,38 @@
 set -euo pipefail
 
 # Global variables
-SELF_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+SELF_PATH="$(readlink -f -- "${(%):-%N}")"
+readonly SELF_PATH
+
+SELF_DIR="$(cd -- "$(dirname -- "${SELF_PATH}")" && pwd)"
 readonly SELF_DIR
 
-ZSH_CUSTOM=$(zsh -ic "echo \$ZSH_CUSTOM")
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 readonly ZSH_CUSTOM
 
 { # Colors
-  COLOR_RESET=$'\033[0m'
-  COLOR_BOLD_RED=$'\033[1;31m'
-  COLOR_BOLD_GREEN=$'\033[1;32m'
-  COLOR_BOLD_YELLOW=$'\033[1;33m'
-  COLOR_BOLD_BLUE=$'\033[1;34m'
+  NC=$'\033[0m'
+  BOLD_RED=$'\033[1;31m'
+  BOLD_GREEN=$'\033[1;32m'
+  BOLD_YELLOW=$'\033[1;33m'
+  BOLD_BLUE=$'\033[1;34m'
 }
 
 { # Logging functions
   log::info() {
-    echo -e "${COLOR_BOLD_BLUE}[INFO]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_BLUE}[INFO]${NC} $*" >&2
   }
 
   log::success() {
-    echo -e "${COLOR_BOLD_GREEN}[SUCCESS]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_GREEN}[SUCCESS]${NC} $*" >&2
   }
 
   log::warning() {
-    echo -e "${COLOR_BOLD_YELLOW}[WARNING]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_YELLOW}[WARNING]${NC} $*" >&2
   }
 
   log::error() {
-    echo -e "${COLOR_BOLD_RED}[ERROR]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_RED}[ERROR]${NC} $*" >&2
   }
 }
 
@@ -77,29 +80,12 @@ check_dependencies() {
 }
 
 parse_args() {
-  local custom_dir=""
-
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      --custom-dir)
-        custom_dir="$2"
-        shift 2
-        ;;
-      -*)
-        log::error "Unknown option: $1"
-        exit 1
-        ;;
-      *)
-        log::error "Unexpected argument: $1"
-        exit 1
-        ;;
-    esac
-  done
-
-  if [[ -z "${custom_dir}" ]]; then
-    log::error "--custom-dir is required."
+  if [[ $# -ne 1 ]]; then
+    log::error "Usage: $0 <path>"
     exit 1
   fi
+
+  local custom_dir="$1"
 
   echo "${custom_dir}"
 }

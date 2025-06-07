@@ -17,14 +17,14 @@
         /**
           * AI extensions
           **/
-        "github.copilot",
-        "github.copilot-chat",
-        "chrisdias.promptboost",
+        // "github.copilot",
+        // "github.copilot-chat",
+        // "chrisdias.promptboost",
         /**
         * Opinionated extensions (Themes, colors, etc.)
         **/
-        "pkief.material-icon-theme",
-        "atomiks.moonlight",
+        // "pkief.material-icon-theme",
+        // "atomiks.moonlight",
         /**
           * Bash script extensions
           **/
@@ -57,11 +57,15 @@
         "files.eol": "\n",
         "files.trimTrailingWhitespace": true,
         "terminal.integrated.shell.linux": "/bin/zsh",
+        "files.watcherExclude": {
+          "**/node_modules/*": true,
+          "**/vendor/*": true
+        },
         /**
          * Settings for Opinionated Extensions (themes, colors, etc.)
          **/
-        "workbench.iconTheme": "material-icon-theme",
-        "workbench.colorTheme": "Moonlight",
+        // "workbench.iconTheme": "material-icon-theme",
+        // "workbench.colorTheme": "Moonlight",
         /**
           * Settings for Extensions
           **/
@@ -110,12 +114,11 @@
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
   "remoteUser": "vscode",
-  "onCreateCommand": "zsh -i .devcontainer/scripts/on-create.sh",
-  "postCreateCommand": "zsh -i .devcontainer/scripts/post-create.sh",
-  "postStartCommand": "zsh -i .devcontainer/scripts/post-start.sh",
+  "onCreateCommand": ".devcontainer/lifecycle/on-create.zsh",
+  "postCreateCommand": ".devcontainer/lifecycle/post-create.zsh",
+  "postStartCommand": ".devcontainer/lifecycle/post-start.zsh",
   "containerEnv": {
     "INSIDE_DEVCONTAINER": "true",
-    "WORKSPACE_DIR": "${containerWorkspaceFolder}",
-    "WITH_ZSH_PLUGINS": "zsh-users/zsh-autosuggestions zsh-users/zsh-syntax-highlighting zsh-users/zsh-completions"
+    "WORKSPACE_DIR": "${containerWorkspaceFolder}"
   }
 }
