@@ -13,34 +13,25 @@
       "args": [
         "run",
         "-i",
-        "--rm",
         "-e",
         "BRAVE_API_KEY",
+        "--restart",
+        "unless-stopped",
         "mcp/brave-search"
       ],
       "env": {
         "BRAVE_API_KEY": "${input:brave_api_key}"
       }
     },
-    "memory": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "-v",
-        "claude-memory:/app/dist",
-        "--rm",
-        "mcp/memory"
-      ]
-    },
     "git": {
       "command": "docker",
       "args": [
         "run",
-        "--rm",
         "-i",
         "--mount",
         "type=bind,src=${workspaceFolder},dst=/workspace",
+        "--restart",
+        "unless-stopped",
         "mcp/git"
       ]
     },
@@ -49,9 +40,10 @@
       "args": [
         "run",
         "-i",
-        "--rm",
         "--mount",
         "type=bind,src=${workspaceFolder},dst=/projects",
+        "--restart",
+        "unless-stopped",
         "mcp/filesystem",
         "/projects"
       ]
@@ -61,7 +53,8 @@
       "args": [
         "run",
         "-i",
-        "--rm",
+        "--restart",
+        "unless-stopped",
         "mcp/fetch"
       ]
     }

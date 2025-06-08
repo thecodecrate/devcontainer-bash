@@ -1,12 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 #
 # Switch APT repository mirrors in Debian-based systems.
 #
 # Usage:
-#   sudo ./setup.bash [OPTIONS] <new_mirror>
-#   sudo ./setup.bash --type deb mirrors.kernel.org
-#   sudo ./setup.bash --suite security security.ubuntu.com
-#   sudo ./setup.bash --no-backup test-mirror.example.com
+#   sudo ./run.zsh [OPTIONS] <new_mirror>
+#   sudo ./run.zsh --type deb mirrors.kernel.org
+#   sudo ./run.zsh --suite security security.ubuntu.com
+#   sudo ./run.zsh --no-backup test-mirror.example.com
 #
 # Options:
 #   --type [deb|deb-src|all]
@@ -15,43 +15,49 @@
 #       Filter by distribution suite (default: all)
 #   --no-backup
 #       Skip backup creation
+#   --no-update
+#       Skip running 'apt update' after switching mirrors
 #
 # Notes:
 #   - Replaces mirror URLs while preserving all other repository metadata.
 #   - Processes /etc/apt/sources.list only (not sources.list.d files).
 #   - Creates timestamped backups by default unless --no-backup is specified.
-#   - Run 'sudo apt update' after switching mirrors.
 #   - Script must be run with sudo privileges.
 #
 
 set -euo pipefail
 
-SELF_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+# Global variables
+SELF_PATH="$(readlink -f -- "${(%):-%N}")"
+readonly SELF_PATH
+
+SELF_DIR="$(cd -- "$(dirname -- "${SELF_PATH}")" && pwd)"
 readonly SELF_DIR
 
+
 { # Colors
-  COLOR_RESET=$'\033[0m'
-  COLOR_BOLD_RED=$'\033[1;31m'
-  COLOR_BOLD_GREEN=$'\033[1;32m'
-  COLOR_BOLD_YELLOW=$'\033[1;33m'
-  COLOR_BOLD_BLUE=$'\033[1;34m'
+  BOLD_RED=$'\033[1;31m'
+  BOLD_GREEN=$'\033[1;32m'
+  BOLD_YELLOW=$'\033[1;33m'
+  BOLD_BLUE=$'\033[1;34m'
+  NC=$'\033[0m'
 }
 
 { # Logging functions
   log::info() {
-    echo -e "${COLOR_BOLD_BLUE}[INFO]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_BLUE}[INFO]${NC} $*" >&2
   }
 
   log::success() {
-    echo -e "${COLOR_BOLD_GREEN}[SUCCESS]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_GREEN}[SUCCESS]${NC} $*" >&2
   }
 
   log::warning() {
-    echo -e "${COLOR_BOLD_YELLOW}[WARNING]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_YELLOW}[WARNING]${NC} $*" >&2
   }
 
   log::error() {
-    echo -e "${COLOR_BOLD_RED}[ERROR]${COLOR_RESET} $*" >&2
+    echo -e "${BOLD_RED}[ERROR]${NC} $*" >&2
   }
 }
 
@@ -65,17 +71,20 @@ check_dependencies() {
     log::error "awk is required to process sources.list."
     exit 1
   fi
+}
 
+check_environment() {
   if [[ "$EUID" -ne 0 ]]; then
     log::error "Please run the script with sudo."
     exit 1
   fi
 }
 
-parse_args() {
+parse_arguments() {
   local type="all"
   local suite="all"
   local no_backup=0
+  local no_update=0
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -89,6 +98,10 @@ parse_args() {
         ;;
       --no-backup)
         no_backup=1
+        shift
+        ;;
+      --no-update)
+        no_update=1
         shift
         ;;
       -*)
@@ -107,7 +120,7 @@ parse_args() {
     exit 1
   fi
 
-  echo "$type" "$suite" "$no_backup" "$new_provider"
+  echo "$type" "$suite" "$no_backup" "$no_update" "$new_provider"
 }
 
 sources_file::backup() {
@@ -156,19 +169,32 @@ sources_file::process() {
   fi
 }
 
+apt::update() {
+  if ! apt-get update; then
+    log::error "Failed to run 'apt update'. Please check your sources.list."
+    exit 1
+  fi
+}
+
 main() {
   show_environment "$@"
 
   check_dependencies
 
+  check_environment
+
   # Parse arguments and assign to variables
-  read -r type suite no_backup new_provider < <(parse_args "$@")
+  read -r type suite no_backup no_update new_provider < <(parse_arguments "$@")
 
   if [[ "${no_backup}" -eq 0 ]]; then
     sources_file::backup
   fi
 
   sources_file::process "${type}" "${suite}" "${new_provider}"
+
+  if [[ "${no_update}" -eq 0 ]]; then
+    apt::update
+  fi
 
   log::success "Successfully switched APT repository mirrors to ${new_provider}."
 }
